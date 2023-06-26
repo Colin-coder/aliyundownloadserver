@@ -1,0 +1,39 @@
+# fly.toml file generated for nk-aliyun-server on 2023-06-26T10:51:58+08:00
+
+app = "nk-aliyun-server"
+kill_signal = "SIGINT"
+kill_timeout = 5
+primary_region = "nrt"
+
+[build]
+  builder = "paketobuildpacks/builder:full"
+  builtin = "python"
+  [build.settings]
+    pythonbase = "3.9-slim-buster"
+
+[env]
+  PORT = "8080"
+
+[mounts]
+  # source = "data"
+  # destination = "/data/nkaliyunserver"
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 8080
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+
+  [[services.tcp_checks]]
+    interval = "10s"
+    timeout = "2s"
+    restart_limit = 0
